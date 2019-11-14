@@ -20,7 +20,7 @@ function App() {
           Email: {user.email}
         </p>
       ))}
-      <button>+</button>
+      <button> +</button>
       <button>-</button>
     </div>
   )

@@ -5,10 +5,12 @@ import axios from "axios"
 // action definitions
 const GET_USERS = "users/GET_USERS"
 const ADD_GOING = "going/ADD_GOING"
+const NOT_GOING = "notGoing/NOT_GOING"
 // initial state
 const initialState = {
   users: [],
-  userGoing: []
+  userGoing: [],
+  userNotGoing: []
 }
 
 // reducer
@@ -17,6 +19,8 @@ export default (state = initialState, action) => {
     case GET_USERS:
       return { ...state, users: action.payload }
     case ADD_GOING:
+      return { ...state, userGoing: action.payload }
+    case NOT_GOING:
       return { ...state, userGoing: action.payload }
 
     default:
@@ -36,11 +40,44 @@ const getUsers = () => {
   }
 }
 
+const getUsersGoing = () => {
+  return dispatch => {
+    axios.get("https://randomuser.me/api/?results=1").then(resp => {
+      dispatch({
+        type: ADD_GOING,
+        payload: resp.data.results
+      })
+    })
+  }
+}
+
+const getUsersNotGoing = () => {
+  return dispatch => {
+    axios.get("https://randomuser.me/api/?results=1").then(resp => {
+      dispatch({
+        type: NOT_GOING,
+        payload: resp.data.results
+      })
+    })
+  }
+}
+
 const addGoing = () => {
   return dispatch => {
     axios.post("/users/going").then(resp => {
       dispatch({
         type: ADD_GOING,
+        payload: resp.data
+      })
+    })
+  }
+}
+
+const addNotGoing = () => {
+  return dispatch => {
+    axios.post("/users/going").then(resp => {
+      dispatch({
+        type: NOT_GOING,
         payload: resp.data
       })
     })
