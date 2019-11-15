@@ -6,9 +6,9 @@ function App() {
 
   return (
     <div className="container">
-      {users.map(user => (
-        <>
-          <p key={user.id}>
+      {users.map((user, i) => (
+        <div key={i}>
+          <p>
             <img src={user.picture.large} />
             <br />
             Name: {user.name.first} {user.name.last}
@@ -21,7 +21,7 @@ function App() {
           <span>
             <button onClick={e => sendNotGoing(user)}>Not Going</button>
           </span>
-        </>
+        </div>
       ))}
     </div>
   )
