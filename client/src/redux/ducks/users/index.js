@@ -6,6 +6,8 @@ import axios from "axios"
 const GET_USERS = "users/GET_USERS"
 const ADD_GOING = "going/ADD_GOING"
 const NOT_GOING = "notGoing/NOT_GOING"
+const GOING_LIST = "goinglist/GOING_LIST"
+const NOT_GOING_LIST = "notgoinglist/NOT_GOING_LIST"
 // initial state
 const initialState = {
   users: [],
@@ -21,7 +23,7 @@ export default (state = initialState, action) => {
     case ADD_GOING:
       return { ...state, userGoing: action.payload }
     case NOT_GOING:
-      return { ...state, userGoing: action.payload }
+      return { ...state, userNotGoing: action.payload }
 
     default:
       return state
@@ -42,10 +44,10 @@ const getUsers = () => {
 
 const getUsersGoing = () => {
   return dispatch => {
-    axios.get("https://randomuser.me/api/?results=1").then(resp => {
+    axios.get("http://localhost:8080/users/going").then(resp => {
       dispatch({
-        type: ADD_GOING,
-        payload: resp.data.results
+        type: GET_USERS,
+        payload: resp.data
       })
     })
   }
@@ -53,33 +55,27 @@ const getUsersGoing = () => {
 
 const getUsersNotGoing = () => {
   return dispatch => {
-    axios.get("https://randomuser.me/api/?results=1").then(resp => {
+    axios.get("http://localhost:8080/users/notgoing").then(resp => {
       dispatch({
-        type: NOT_GOING,
-        payload: resp.data.results
-      })
-    })
-  }
-}
-
-const addGoing = () => {
-  return dispatch => {
-    axios.post("/users/going").then(resp => {
-      dispatch({
-        type: ADD_GOING,
+        type: GET_USERS,
         payload: resp.data
       })
     })
   }
 }
 
-const addNotGoing = () => {
+function addGoing(user) {
   return dispatch => {
-    axios.post("/users/going").then(resp => {
-      dispatch({
-        type: NOT_GOING,
-        payload: resp.data
-      })
+    axios.post("/users/going", { user }).then(resp => {
+      dispatch(getUsers())
+    })
+  }
+}
+
+function addNotGoing(user) {
+  return dispatch => {
+    axios.post("/users/notgoing", { user }).then(resp => {
+      dispatch(getUsers())
     })
   }
 }
@@ -87,32 +83,20 @@ const addNotGoing = () => {
 // custom hooks
 export function useUsers() {
   const users = useSelector(appState => appState.userState.users)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(getUsers())
-  }, [dispatch])
-
-  return { users }
-}
-
-export function usePerson() {
   const going = useSelector(appState => appState.userState.userGoing)
+  const notgoing = useSelector(appState => appState.userState.userNotGoing)
   const dispatch = useDispatch()
-  const toGo = user => dispatch(Going(user))
-  const addGoingg = user => dispatch(addGoing(user))
-  const addNotGoing = user => dispatch(addNotGoing(user))
+
+  const get = () => dispatch(getUsers())
+  const sendNotGoing = user => {
+    dispatch(addNotGoing(user))
+  }
+  const sendGoing = user => {
+    dispatch(addGoing(user))
+  }
   useEffect(() => {
-    dispatch(addGoing())
+    get()
   }, [dispatch])
 
-  return { going, toGo, addGoingg, addNotGoing }
-}
-
-function Going() {
-  return dispatch => {
-    axios.post("/users/going").then(resp => {
-      dispatch()
-    })
-  }
+  return { users, sendGoing, going, notgoing, sendNotGoing }
 }
