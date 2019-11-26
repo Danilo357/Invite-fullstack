@@ -1,29 +1,30 @@
 import React from "react"
-import { useUsers } from "../hooks"
+import { BrowserRouter as Router, Route, Link } from "react-router-dom"
+import Invite from "./Invite"
+import Going from "./Going"
+import NotGoing from "./NotGoing"
 
 function App() {
-  const { users, sendGoing, sendNotGoing } = useUsers()
-
   return (
-    <div className="container">
-      {users.map((user, i) => (
-        <div key={i}>
-          <p>
-            <img src={user.picture.large} />
-            <br />
-            Name: {user.name.first} {user.name.last}
-            <br />
-            Phone: {user.phone}
-            <br />
-            Email: {user.email}
-          </p>
-          <button onClick={e => sendGoing(user)}>Going</button>
-          <span>
-            <button onClick={e => sendNotGoing(user)}>Not Going</button>
-          </span>
-        </div>
-      ))}
-    </div>
+    <Router>
+      <div className="header">
+        <br />
+        <p>
+          Check Going List Here: <Link to="/going">Going</Link>
+        </p>
+
+        <br />
+        <p>
+          Check Not Going List Here: <Link to="/notgoing">Not Going</Link>
+        </p>
+
+        <br />
+        <br />
+        <Route exact path="/" component={Invite}></Route>
+        <Route path="/Going" component={Going}></Route>
+        <Route path="/NotGoing" component={NotGoing}></Route>
+      </div>
+    </Router>
   )
 }
 

@@ -21,9 +21,12 @@ export default (state = initialState, action) => {
     case GET_USERS:
       return { ...state, users: action.payload }
     case ADD_GOING:
-      return { ...state, userGoing: action.payload }
+      return { ...state, userGoing: [...state.userGoing, action.payload] }
     case NOT_GOING:
-      return { ...state, userNotGoing: action.payload }
+      return {
+        ...state,
+        userNotGoing: [...state.userNotGoing, action.payload]
+      }
 
     default:
       return state
@@ -67,6 +70,11 @@ const getUsersNotGoing = () => {
 function addGoing(user) {
   return dispatch => {
     axios.post("/users/going", { user }).then(resp => {
+      dispatch({
+        type: ADD_GOING,
+        payload: resp.data
+      })
+
       dispatch(getUsers())
     })
   }
@@ -75,6 +83,10 @@ function addGoing(user) {
 function addNotGoing(user) {
   return dispatch => {
     axios.post("/users/notgoing", { user }).then(resp => {
+      dispatch({
+        type: NOT_GOING,
+        payload: resp.data
+      })
       dispatch(getUsers())
     })
   }

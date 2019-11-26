@@ -31,3 +31,7 @@ code {
 img {
   width: 100px;
 }
+
+.header {
+  text-align: center;
+}
